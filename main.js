@@ -50,7 +50,7 @@ router
         E.title({}, profile.displayName ?? profile.handle),
         E.subtitle({}, profile.description),
         E.updated({}, profile.indexedAt),
-        E.author({}, E.name({}, p.author.displayName ?? p.author.handle)),
+        E.author({}, E.name({}, profile.displayName ?? profile.handle)),
         E.link({ href: `https://bsky.app/profile/${profile.did}` }),
         E.generator({}, "Feedsky"),
         E.icon({}, profile.avatar),
