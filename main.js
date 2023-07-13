@@ -16,7 +16,7 @@ router
             ),
         ).render('html')
     })
-    .get('/:actor', async context => {
+    .get('/profile/:actor', async context => {
         const agent = new Agent({ serviceUri: 'https://bsky.social/' })
         await agent.login({
             identifier: Deno.env.get('USER'),
@@ -28,7 +28,7 @@ router
         profile = profile.data
 
         if (context.params.actor !== profile.did) {
-            context.response.redirect(`/${profile.did}`)
+            context.response.redirect(`/profile/${profile.did}`)
             return
         }
 
