@@ -4,14 +4,20 @@ import { Document, E } from './xml-junk.js'
 
 const router = new Router()
 
+function truncate(chars, indicator, text) {
+    if (text.length > chars)
+        text = text.substring(0, chars - indicator.length) + indicatorz
+    return text
+)
+
+
 router
     .get('/', context => {
         context.response.body = new Document(
             E.title({}, 'Bluesky 2 Feed'),
             E.footer({ style: 'text-align:center' },
                 E.p({},
-                    'Made by ',
-                    E.a({ href: 'https://summerti.me/' }, 'Summer'),
+                    'Made by ', E.a({ href: 'https://summerti.me/' }, 'Summer'),
                 ),
             ),
         ).render('html')
@@ -42,19 +48,23 @@ router
             E.feed({ xmlns: 'http://www.w3.org/2005/Atom' },
                 E.id({}, profile.did),
                 E.title({}, profile.displayName ?? profile.handle),
+                E.subtitle({}, profile.description),
                 E.updated({}, profile.indexedAt),
-                ...feed.map(p => E.entry({},
-                    E.id({}, p.uri),
-                    E.title({},
-                        p.record.text.length > 30
-                            ? p.record.text.substring(0, 29) + '…'
-                            : p.record.text,
-                    ),
-                    E.updated({}, p.indexedAt),
+                E.author({}, E.name({}, p.author.displayName ?? p.author.handle)),
+                E.link({href:`https://bsky.app/profile/${profile.did}`}),
+                E.generator({}, "Feedsky"),
+                E.icon({}, profile.avatar),
+                E.logo({}, profile.banner),
+                ...feed.map(post => E.entry({},
+                    E.id({}, post.uri),
+                    E.title({type:'text'}, truncate(80, '…', post.record.text)),
+                    E.published({},post.record.createdAt),
+                    E.updated({}, post.indexedAt),
                     E.author({},
-                        E.name({}, p.author.displayName ?? p.author.handle),
+                        E.name({}, post.author.displayName ?? post.author.handle),
                     ),
-                    E.content({}, p.record.text),
+                    E.content({type:'text'}, post.record.text),
+                    E.link({href:`https://bsky.app/profile/${profile.did}/post/${post.uri.split('/').at(-1)}`}),
                 )),
             ),
         ).render('xml')
