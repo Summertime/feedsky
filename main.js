@@ -6,7 +6,7 @@ const router = new Router();
 
 function truncate(chars, indicator, text) {
   if (text.length > chars) {
-    text = text.substring(0, chars - indicator.length) + indicatorz;
+    text = text.substring(0, chars - indicator.length) + indicator;
   }
   return text;
 }
